@@ -8,14 +8,23 @@
 </head>
 <body>
     <header>
-        <h1>Actividad #</h1>
+        <h1>Actividad 2</h1>
     </header>
     <main>
+        <div>
+            <button onclick="toggleLED(1)">Toggle LED 1</button>
+            <button onclick="toggleLED(2)">Toggle LED 2</button>
+            <button onclick="toggleLED(3)">Toggle LED 3</button>
+        </div>
+        <div>
+            <label for="ledColor">Elija el color de la tira LED WS2818B:</label>
+            <input type="color" id="ledColor" name="ledColor" onchange="setLEDColor()">
+        </div>
     </main>
     <footer>
         <p>Representación Frontal y Visual de Datos</p>
         <p>Computadoras de Aeronaves</p>
-        <p>Alumno XX</p>
+        <p>Alumno Morganti Santiago</p>
         <p>Prof. Carlassara Fabrizio</p>
         <p id="fecha"></p>
     </footer>
