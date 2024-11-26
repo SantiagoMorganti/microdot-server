@@ -4,39 +4,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
     fechaElemento.textContent = fechaActual.toLocaleDateString('es-ES', opcionesFecha);
 
-    const slider = document.getElementById('setpoint-slider');
+    const setpointSlider = document.getElementById('setpoint-slider');
     const setpointValue = document.getElementById('setpoint-value');
     const sensorTemperature = document.getElementById('sensor-temperature');
     const buzzerStatus = document.getElementById('buzzer-status');
 
-    const updateTemperature = () => {
-        fetch('/temperature')
-            .then(response => response.json())
-            .then(data => {
-                sensorTemperature.textContent = `${data.temperature}`;
-            });
-    };
-
-    const updateBuzzerStatus = () => {
-        fetch('/buzzer')
-            .then(response => response.json())
-            .then(data => {
-                buzzerStatus.textContent = data.buzzer_status ? 'Activado' : 'Desactivado';
-            });
-    };
-
-    slider.addEventListener('input', () => {
-        setpointValue.textContent = `${slider.value}°C`;
+    // Actualizar el valor visual del slider
+    setpointSlider.addEventListener('input', () => {
+        setpointValue.textContent = `${setpointSlider.value}°C`;
     });
 
-    slider.addEventListener('change', () => {
-        fetch('/setpoint', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ setpoint: slider.value })
-        });
+    // Enviar el valor del setpoint al servidor al soltar el slider
+    setpointSlider.addEventListener('change', () => {
+        fetch(`/setpoint/set/${setpointSlider.value}`)
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Setpoint actualizado:', data);
+            })
+            .catch(error => {
+                console.error('Error al actualizar el setpoint:', error);
+            });
     });
 
-    setInterval(updateTemperature, 2000); // Actualiza cada 2 segundos
-    setInterval(updateBuzzerStatus, 2000); // Actualiza cada 2 segundos
+    // Función para actualizar los datos periódicamente
+    function actualizarDatos() {
+        // Actualizar la temperatura del sensor
+        fetch('/sensors/ds18b20/read')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                sensorTemperature.textContent = `${data.temperature}°C`;
+            })
+            .catch(error => {
+                console.error('Error al obtener la temperatura:', error);
+            });
+
+        // Actualizar el estado del buzzer
+        fetch('/buzzer/status')
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                buzzerStatus.textContent = data.buzzer;
+            })
+            .catch(error => {
+                console.error('Error al obtener el estado del buzzer:', error);
+            });
+    }
+
+    // Llamar a actualizarDatos cada 2 segundos
+    setInterval(actualizarDatos, 2000);
 });

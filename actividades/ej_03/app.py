@@ -1,6 +1,5 @@
 from microdot import Microdot, send_file
 from machine import Pin
-from machine import ADC
 import ds18x20
 import onewire
 import time
@@ -20,10 +19,15 @@ async def index(request):
     """Devuelve la página principal."""
     return send_file('index.html')
 
-@app.route('/<dir>/<file>')
-async def static(request, dir, file):
-    """Sirve archivos estáticos (CSS o JS)."""
-    return send_file("/{}/{}".format(dir, file))
+@app.route('/scripts/<path:file>')
+async def serve_scripts(request, file):
+    """Sirve archivos JavaScript desde el directorio scripts."""
+    return send_file(f'scripts/{file}')
+
+@app.route('/styles/<path:file>')
+async def serve_styles(request, file):
+    """Sirve archivos CSS desde el directorio styles."""
+    return send_file(f'styles/{file}')
 
 @app.route('/sensors/ds18b20/read')
 async def temperature_measuring(request):
@@ -54,6 +58,12 @@ async def setpoint_calculation(request, value):
 async def buzzer_status(request):
     """Devuelve el estado actual del buzzer."""
     return {'buzzer': 'Encendido' if buzzer_pin.value() else 'Apagado'}
+
+# Manejo de rutas no encontradas
+@app.errorhandler(404)
+def not_found(request):
+    """Devuelve un JSON válido para rutas no encontradas."""
+    return {'error': 'Ruta no encontrada'}, 404
 
 # Arranque del servidor en el puerto 80
 app.run(port=80)
