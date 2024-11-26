@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad #</title>
+    <title>Actividad 3</title>
     <link rel="stylesheet" href="styles/base.css">
 </head>
 <body>
     <header>
-        <h1>Actividad #</h1>
+        <h1>Actividad 3</h1>
     </header>
     <main>
+        <section>
+            <label for="setpoint-slider">Temperatura de referencia (Setpoint):</label>
+            <input type="range" id="setpoint-slider" min="0" max="30" value="15">
+            <span id="setpoint-value">15°C</span>
+        </section>
+        <section>
+            <p>Temperatura actual: <span id="sensor-temperature">--</span>°C</p>
+            <p>Estado del buzzer: <span id="buzzer-status">Desactivado</span></p>
+        </section>
     </main>
     <footer>
         <p>Representación Frontal y Visual de Datos</p>
         <p>Computadoras de Aeronaves</p>
-        <p>Alumno XX</p>
+        <p>Alumno Morgatni Santiago</p>
         <p>Prof. Carlassara Fabrizio</p>
         <p id="fecha"></p>
     </footer>
